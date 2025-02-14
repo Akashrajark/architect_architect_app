@@ -1,4 +1,4 @@
-import 'package:dreamhome_architect/features/home/home_screen.dart';
+import 'package:dreamhome_architect/features/signup/signup_screen.dart';
 import 'package:dreamhome_architect/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
@@ -12,8 +12,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: appTheme,
-      home: const HomeScreen(),
+      home: const SignupScreen(),
     );
   }
 }

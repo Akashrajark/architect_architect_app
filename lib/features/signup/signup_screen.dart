@@ -3,6 +3,7 @@ import 'package:dreamhome_architect/common_widgets.dart/custom_image_picker_butt
 import 'package:dreamhome_architect/common_widgets.dart/custom_text_formfield.dart';
 import 'package:dreamhome_architect/features/home/home_screen.dart';
 import 'package:dreamhome_architect/features/signin/signin_screen.dart';
+import 'package:dreamhome_architect/features/signup/signup_second_screen.dart';
 import 'package:dreamhome_architect/theme/app_theme.dart';
 import 'package:dreamhome_architect/util/value_validator.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _fullnameController = TextEditingController();
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
 
   @override
@@ -64,26 +65,26 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                     SizedBox(height: 20),
                     CustomTextFormField(
-                      labelText: 'username',
-                      controller: _usernameController,
+                      labelText: 'Full name',
+                      controller: _fullnameController,
                       validator: notEmptyValidator,
                     ),
                     SizedBox(height: 15),
                     CustomTextFormField(
-                      labelText: 'email',
+                      labelText: 'Email',
                       controller: _emailController,
                       validator: emailValidator,
                     ),
                     SizedBox(height: 15),
                     CustomTextFormField(
                       suffixIconData: Icons.visibility,
-                      labelText: 'password',
+                      labelText: 'Password',
                       controller: _passwordController,
                       validator: passwordValidator,
                     ),
                     SizedBox(height: 15),
                     CustomTextFormField(
-                      labelText: 'phone',
+                      labelText: 'Phone',
                       controller: _phoneController,
                       validator: phoneNumberValidator,
                     ),
@@ -93,22 +94,13 @@ class _SignupScreenState extends State<SignupScreen> {
                       child: CustomButton(
                         inverse: true,
                         onPressed: () {
-                          // if (_formkey.currentState!.validate()) {
-                          //   BlocProvider.of<SignupBloc>(context).add(
-                          //     SignUpUserEvent(
-                          //       email: _emailController.text.trim(),
-                          //       password: _passwordController.text.trim(),
-                          //       userDetails: {
-                          //         'email': _emailController.text.trim(),
-                          //         'phone': _phoneController.text.trim(),
-                          //         'user_name':
-                          //             _usernameController.text.trim(),
-                          //       },
-                          //     ),
-                          //   );
-                          // }
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SignupSecondScreen(),
+                              ));
                         },
-                        label: 'Signup',
+                        label: 'Next',
                       ),
                     ),
                     Row(

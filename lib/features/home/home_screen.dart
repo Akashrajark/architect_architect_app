@@ -1,3 +1,7 @@
+import 'package:dreamhome_architect/features/Profile/profile_screen.dart';
+import 'package:dreamhome_architect/features/acquired_screen/acquired_screen.dart';
+import 'package:dreamhome_architect/features/create_home_plan/create_home_plan_screen.dart';
+import 'package:dreamhome_architect/features/payment/payment_screen.dart';
 import 'package:dreamhome_architect/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -13,7 +17,12 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
-  final List<Widget> _pages = [];
+  final List<Widget> _pages = [
+    CreateHomePlanScreen(),
+    AcquiredScreen(),
+    ProfileScreen(),
+    PaymentScreen()
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -52,10 +61,10 @@ class _HomeScreenState extends State<HomeScreen> {
             iconSize: 24,
             tabBackgroundColor: Colors.black.withAlpha(1),
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            selectedIndex: _selectedIndex, // Ensure selected tab is highlighted
+            selectedIndex: _selectedIndex,
             onTabChange: (index) {
               setState(() {
-                _selectedIndex = index; // Update index when tab is selected
+                _selectedIndex = index;
               });
             },
             tabs: const [
@@ -64,12 +73,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 text: 'Home',
               ),
               GButton(
-                icon: Icons.architecture_sharp,
-                text: 'Architect',
+                icon: Icons.sell_outlined,
+                text: 'Acquired',
               ),
               GButton(
-                icon: LineIcons.archive,
-                text: 'Owned',
+                icon: LineIcons.dollarSign,
+                text: 'Payment',
               ),
               GButton(
                 icon: LineIcons.user,
