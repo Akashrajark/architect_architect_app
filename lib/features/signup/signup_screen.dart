@@ -1,6 +1,6 @@
 import 'package:dreamhome_architect/common_widgets.dart/custom_button.dart';
 import 'package:dreamhome_architect/common_widgets.dart/custom_text_formfield.dart';
-import 'package:dreamhome_architect/features/home/home_screen.dart';
+import 'package:dreamhome_architect/features/home_screen.dart';
 import 'package:dreamhome_architect/features/signin/signin_screen.dart';
 import 'package:dreamhome_architect/features/signup/signup_second_screen.dart';
 import 'package:dreamhome_architect/theme/app_theme.dart';
@@ -25,6 +25,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _fullnameController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool isObscure = true;
 
   @override
   void initState() {
@@ -115,9 +116,10 @@ class _SignupScreenState extends State<SignupScreen> {
                           ),
                           SizedBox(height: 5),
                           CustomTextFormField(
+                            isLoading: state is SignUpLoadingState,
                             labelText: 'Full name',
                             controller: _fullnameController,
-                            validator: notEmptyValidator,
+                            validator: alphabeticWithSpaceValidator,
                           ),
                           SizedBox(height: 15),
                           Text(
@@ -126,6 +128,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           ),
                           SizedBox(height: 5),
                           CustomTextFormField(
+                            isLoading: state is SignUpLoadingState,
                             labelText: 'Phone',
                             controller: _phoneController,
                             validator: phoneNumberValidator,
@@ -137,6 +140,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           ),
                           SizedBox(height: 5),
                           CustomTextFormField(
+                            isLoading: state is SignUpLoadingState,
                             labelText: 'Email',
                             controller: _emailController,
                             validator: emailValidator,
@@ -147,14 +151,26 @@ class _SignupScreenState extends State<SignupScreen> {
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
                           SizedBox(height: 5),
-                          CustomTextFormField(
-                            suffixIconData: Icons.visibility,
-                            labelText: 'Password',
-                            controller: _passwordController,
-                            validator: passwordValidator,
-                          ),
+                          TextFormField(
+                              enabled: state is! SignUpLoadingState,
+                              controller: _passwordController,
+                              obscureText: isObscure,
+                              validator: passwordValidator,
+                              decoration: InputDecoration(
+                                suffixIcon: IconButton(
+                                    onPressed: () {
+                                      isObscure = !isObscure;
+                                      setState(() {});
+                                    },
+                                    icon: Icon(isObscure
+                                        ? Icons.visibility_off
+                                        : Icons.visibility)),
+                                border: const OutlineInputBorder(),
+                                hintText: 'Password',
+                              )),
                           SizedBox(height: 15),
                           CustomButton(
+                            isLoading: state is SignUpLoadingState,
                             inverse: true,
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {

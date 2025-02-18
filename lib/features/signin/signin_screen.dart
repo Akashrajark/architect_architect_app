@@ -1,6 +1,6 @@
 import 'package:dreamhome_architect/common_widgets.dart/custom_button.dart';
 import 'package:dreamhome_architect/common_widgets.dart/custom_text_formfield.dart';
-import 'package:dreamhome_architect/features/home/home_screen.dart';
+import 'package:dreamhome_architect/features/home_screen.dart';
 import 'package:dreamhome_architect/features/signup/signup_screen.dart';
 import 'package:dreamhome_architect/theme/app_theme.dart';
 import 'package:dreamhome_architect/util/value_validator.dart';
@@ -22,6 +22,7 @@ class _SigninScreenState extends State<SigninScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+  bool isObscure = true;
 
   @override
   void initState() {
@@ -66,88 +67,128 @@ class _SigninScreenState extends State<SigninScreen> {
         },
         builder: (context, state) {
           return Scaffold(
-              backgroundColor: Colors.white,
-              body: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Form(
-                  key: _formkey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Sign in',
-                        style: TextStyle(fontSize: 25),
+            backgroundColor: Colors.white,
+            body: SingleChildScrollView(
+              child: Form(
+                key: _formkey,
+                child: Column(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(32),
+                        bottomRight: Radius.circular(32),
                       ),
-                      SizedBox(
-                        height: 20,
+                      child: Image.asset(
+                        'assets/images/cover_photo.jpg',
+                        height: MediaQuery.of(context).size.width,
+                        width: MediaQuery.of(context).size.width,
+                        fit: BoxFit.cover,
                       ),
-                      CustomTextFormField(
-                          labelText: 'email',
-                          controller: _emailController,
-                          validator: emailValidator),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      CustomTextFormField(
-                          suffixIconData: Icons.visibility,
-                          labelText: 'password',
-                          controller: _passwordController,
-                          validator: passwordValidator),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(15),
-                        child: CustomButton(
-                          inverse: true,
-                          onPressed: () {
-                            if (_formkey.currentState!.validate()) {
-                              BlocProvider.of<SigninBloc>(context).add(
-                                SigninEvent(
-                                  email: _emailController.text.trim(),
-                                  password: _passwordController.text.trim(),
-                                ),
-                              );
-                            }
-                          },
-                          label: 'Signin',
-                        ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Create account?",
-                            style: TextStyle(
-                              color: primaryColor,
-                              fontSize: 15,
-                              fontWeight: FontWeight.normal,
-                            ),
+                            'Sign in',
+                            style: TextStyle(fontSize: 25),
                           ),
-                          TextButton(
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Text(
+                            'Email',
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                          SizedBox(height: 5),
+                          CustomTextFormField(
+                            labelText: 'Enter Email',
+                            controller: _emailController,
+                            validator: emailValidator,
+                            isLoading: state is SigninLoadingState,
+                          ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          Text(
+                            'Password',
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                          SizedBox(height: 5),
+                          TextFormField(
+                              enabled: state is! SigninLoadingState,
+                              controller: _passwordController,
+                              obscureText: isObscure,
+                              validator: passwordValidator,
+                              decoration: InputDecoration(
+                                suffixIcon: IconButton(
+                                    onPressed: () {
+                                      isObscure = !isObscure;
+                                      setState(() {});
+                                    },
+                                    icon: Icon(isObscure
+                                        ? Icons.visibility_off
+                                        : Icons.visibility)),
+                                border: const OutlineInputBorder(),
+                                hintText: 'Password',
+                              )),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          CustomButton(
+                            isLoading: state is SigninLoadingState,
+                            inverse: true,
                             onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => SignupScreen(),
-                                  ));
+                              if (_formkey.currentState!.validate()) {
+                                BlocProvider.of<SigninBloc>(context).add(
+                                  SigninEvent(
+                                    email: _emailController.text.trim(),
+                                    password: _passwordController.text.trim(),
+                                  ),
+                                );
+                              }
                             },
-                            child: Text(
-                              "Signup",
-                              style: TextStyle(
-                                color: Colors.red,
-                                fontSize: 15,
-                                fontWeight: FontWeight.normal,
+                            label: 'Signin',
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Create account?",
+                                style: TextStyle(
+                                  color: primaryColor,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.normal,
+                                ),
                               ),
-                            ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => SignupScreen(),
+                                      ));
+                                },
+                                child: Text(
+                                  "Signup",
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
-                      )
-                    ],
-                  ),
+                      ),
+                    )
+                  ],
                 ),
-              ));
+              ),
+            ),
+          );
         },
       ),
     );

@@ -298,3 +298,12 @@ String? longitudeValidator(String? value) {
 
   return null; // No error
 }
+
+String? architectLicenseValidator(String? value) {
+  if (value == null || value.trim().isEmpty) {
+    return 'This field is required.';
+  } else if (!RegExp(r'^CA/\d{4}/\d{5}$').hasMatch(value)) {
+    return 'Please enter a valid Architect License Number (e.g., CA/2024/12345).';
+  }
+  return null;
+}

@@ -16,7 +16,7 @@ class CustomImagePickerButton extends StatefulWidget {
     this.width = 100,
     this.selectedImage,
     this.showRequiredError = false,
-    this.borderRadius = 50,
+    this.borderRadius = 16,
   });
 
   @override

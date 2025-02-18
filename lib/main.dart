@@ -1,4 +1,4 @@
-import 'package:dreamhome_architect/features/signup/signup_screen.dart';
+import 'package:dreamhome_architect/features/signin/signin_screen.dart';
 import 'package:dreamhome_architect/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: appTheme,
-      home: const SignupScreen(),
+      home: const SigninScreen(),
     );
   }
 }

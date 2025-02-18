@@ -1,7 +1,7 @@
 import 'package:dreamhome_architect/features/Profile/profile_screen.dart';
 import 'package:dreamhome_architect/features/acquired_screen/acquired_screen.dart';
-import 'package:dreamhome_architect/features/create_home_plan/create_home_plan.dart';
-import 'package:dreamhome_architect/features/view_home_plan/view_home_plan.dart';
+import 'package:dreamhome_architect/features/home_plan/add_edit_homeplan.dart';
+import 'package:dreamhome_architect/features/home_plan/view_home_plan.dart';
 import 'package:dreamhome_architect/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -24,18 +24,24 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   @override
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+      ),
       body: Stack(
         alignment: Alignment.bottomCenter,
         children: [
           _pages[_selectedIndex],
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: _selectedIndex == 0
+                ? MainAxisAlignment.start
+                : MainAxisAlignment.center,
             children: [
               Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding: EdgeInsets.only(
+                    bottom: 30, left: _selectedIndex == 0 ? 30 : 0),
                 child: Material(
                   color: Colors.black.withAlpha(200),
                   borderRadius: BorderRadius.circular(64),
@@ -49,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       tabBorderRadius: 25,
                       tabActiveBorder:
                           Border.all(color: onprimaryColor, width: 1),
-                      tabBorder: Border.all(color: Colors.grey[800]!, width: 1),
+                      tabBorder: Border.all(color: Colors.grey, width: 1),
                       tabShadow: [
                         BoxShadow(
                             color: Colors.grey.withAlpha(5), blurRadius: 8)
@@ -57,10 +63,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       curve: Curves.easeOutExpo,
                       duration: const Duration(milliseconds: 200),
                       gap: 8,
-                      color: Colors.grey[800],
+                      color: Colors.grey,
                       activeColor: Colors.white,
                       iconSize: 24,
-                      tabBackgroundColor: Colors.black.withAlpha(1),
+                      tabBackgroundColor: Colors.black.withAlpha(0),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 12),
                       selectedIndex: _selectedIndex,
@@ -99,12 +105,16 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButton: _selectedIndex == 0
           ? FloatingActionButton(
+              backgroundColor: Colors.black.withAlpha(200),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(32)),
               onPressed: () {
                 Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CreateHomePlan(),
-                    ));
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddEditHomeplan(),
+                  ),
+                );
               },
               child: Icon(Icons.add, color: Colors.white),
             )
