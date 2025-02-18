@@ -27,7 +27,76 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages[_selectedIndex],
+      body: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          _pages[_selectedIndex],
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Material(
+                  color: Colors.black.withAlpha(200),
+                  borderRadius: BorderRadius.circular(64),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 10),
+                    child: GNav(
+                      rippleColor: Colors.grey[800]!,
+                      hoverColor: Colors.grey[700]!,
+                      haptic: true,
+                      tabBorderRadius: 25,
+                      tabActiveBorder:
+                          Border.all(color: onprimaryColor, width: 1),
+                      tabBorder: Border.all(color: Colors.grey[800]!, width: 1),
+                      tabShadow: [
+                        BoxShadow(
+                            color: Colors.grey.withAlpha(5), blurRadius: 8)
+                      ],
+                      curve: Curves.easeOutExpo,
+                      duration: const Duration(milliseconds: 200),
+                      gap: 8,
+                      color: Colors.grey[800],
+                      activeColor: Colors.white,
+                      iconSize: 24,
+                      tabBackgroundColor: Colors.black.withAlpha(1),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 12),
+                      selectedIndex: _selectedIndex,
+                      onTabChange: (index) {
+                        setState(() {
+                          _selectedIndex = index;
+                        });
+                      },
+                      tabs: const [
+                        GButton(
+                          padding: EdgeInsets.all(10),
+                          margin: EdgeInsets.all(5),
+                          icon: LineIcons.home,
+                          text: 'Home',
+                        ),
+                        GButton(
+                          padding: EdgeInsets.all(10),
+                          margin: EdgeInsets.all(5),
+                          icon: Icons.sell_outlined,
+                          text: 'Acquired',
+                        ),
+                        GButton(
+                          padding: EdgeInsets.all(10),
+                          margin: EdgeInsets.all(5),
+                          icon: LineIcons.user,
+                          text: 'Profile',
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
       floatingActionButton: _selectedIndex == 0
           ? FloatingActionButton(
               onPressed: () {
@@ -40,62 +109,6 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Icon(Icons.add, color: Colors.white),
             )
           : null,
-      bottomNavigationBar: Container(
-        height: 80,
-        decoration: BoxDecoration(
-          color: Colors.black,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withAlpha(5),
-              spreadRadius: 2,
-              blurRadius: 5,
-              offset: Offset(0, -3),
-            ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          child: GNav(
-            rippleColor: Colors.grey[800]!,
-            hoverColor: Colors.grey[700]!,
-            haptic: true,
-            tabBorderRadius: 25,
-            tabActiveBorder: Border.all(color: onprimaryColor, width: 1),
-            tabBorder: Border.all(color: Colors.grey[800]!, width: 1),
-            tabShadow: [
-              BoxShadow(color: Colors.grey.withAlpha(5), blurRadius: 8)
-            ],
-            curve: Curves.easeOutExpo,
-            duration: const Duration(milliseconds: 200),
-            gap: 8,
-            color: Colors.grey[800],
-            activeColor: Colors.white,
-            iconSize: 24,
-            tabBackgroundColor: Colors.black.withAlpha(1),
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            selectedIndex: _selectedIndex,
-            onTabChange: (index) {
-              setState(() {
-                _selectedIndex = index;
-              });
-            },
-            tabs: const [
-              GButton(
-                icon: LineIcons.home,
-                text: 'Home',
-              ),
-              GButton(
-                icon: Icons.sell_outlined,
-                text: 'Acquired',
-              ),
-              GButton(
-                icon: LineIcons.user,
-                text: 'Profile',
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

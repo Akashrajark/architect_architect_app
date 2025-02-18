@@ -1,5 +1,4 @@
 import 'package:dreamhome_architect/common_widgets.dart/custom_button.dart';
-import 'package:dreamhome_architect/common_widgets.dart/custom_image_picker_button.dart';
 import 'package:dreamhome_architect/common_widgets.dart/custom_text_formfield.dart';
 import 'package:dreamhome_architect/features/home/home_screen.dart';
 import 'package:dreamhome_architect/features/signin/signin_screen.dart';
@@ -7,7 +6,11 @@ import 'package:dreamhome_architect/features/signup/signup_second_screen.dart';
 import 'package:dreamhome_architect/theme/app_theme.dart';
 import 'package:dreamhome_architect/util/value_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../../common_widgets.dart/custom_alert_dialog.dart';
+import 'sign_up_bloc/sign_up_bloc.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -21,7 +24,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _fullnameController = TextEditingController();
-  final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -43,102 +46,169 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Colors.white,
-        body: Center(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+    return BlocProvider(
+      create: (context) => SignUpBloc(),
+      child: BlocConsumer<SignUpBloc, SignUpState>(
+        listener: (context, state) {
+          if (state is SignUpFailureState) {
+            showDialog(
+              context: context,
+              builder: (context) => CustomAlertDialog(
+                title: 'Failure',
+                description: state.message,
+                primaryButton: 'Try Again',
+                onPrimaryPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            );
+          } else if (state is SignUpSuccessState) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SignupSecondScreen(
+                  signupDetails: {
+                    'email': _emailController.text.trim(),
+                    'name': _fullnameController.text.trim(),
+                    'phone': _phoneController.text.trim(),
+                  },
+                ),
+              ),
+            );
+          }
+        },
+        builder: (context, state) {
+          return Scaffold(
+            backgroundColor: Colors.white,
+            body: SingleChildScrollView(
               child: Form(
-                key: _formkey,
+                key: _formKey,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
-                      'Create an account',
-                      style: TextStyle(fontSize: 25),
-                    ),
-                    SizedBox(height: 20),
-                    CustomImagePickerButton(
-                      onPick: (file) {},
-                    ),
-                    SizedBox(height: 20),
-                    CustomTextFormField(
-                      labelText: 'Full name',
-                      controller: _fullnameController,
-                      validator: notEmptyValidator,
-                    ),
-                    SizedBox(height: 15),
-                    CustomTextFormField(
-                      labelText: 'Email',
-                      controller: _emailController,
-                      validator: emailValidator,
-                    ),
-                    SizedBox(height: 15),
-                    CustomTextFormField(
-                      suffixIconData: Icons.visibility,
-                      labelText: 'Password',
-                      controller: _passwordController,
-                      validator: passwordValidator,
-                    ),
-                    SizedBox(height: 15),
-                    CustomTextFormField(
-                      labelText: 'Phone',
-                      controller: _phoneController,
-                      validator: phoneNumberValidator,
-                    ),
-                    SizedBox(height: 15),
-                    Padding(
-                      padding: const EdgeInsets.all(15),
-                      child: CustomButton(
-                        inverse: true,
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SignupSecondScreen(),
-                              ));
-                        },
-                        label: 'Next',
+                    ClipRRect(
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(32),
+                        bottomRight: Radius.circular(32),
+                      ),
+                      child: Image.asset(
+                        'assets/images/cover_photo.jpg',
+                        height: MediaQuery.of(context).size.width,
+                        width: MediaQuery.of(context).size.width,
+                        fit: BoxFit.cover,
                       ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Already have an account?",
-                          style: TextStyle(
-                            color: primaryColor,
-                            fontSize: 15,
-                            fontWeight: FontWeight.normal,
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Create New Account',
+                            style: TextStyle(fontSize: 25),
                           ),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SigninScreen(),
+                          SizedBox(height: 15),
+                          Text(
+                            'Full Name',
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                          SizedBox(height: 5),
+                          CustomTextFormField(
+                            labelText: 'Full name',
+                            controller: _fullnameController,
+                            validator: notEmptyValidator,
+                          ),
+                          SizedBox(height: 15),
+                          Text(
+                            'Phone',
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                          SizedBox(height: 5),
+                          CustomTextFormField(
+                            labelText: 'Phone',
+                            controller: _phoneController,
+                            validator: phoneNumberValidator,
+                          ),
+                          SizedBox(height: 15),
+                          Text(
+                            'Email',
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                          SizedBox(height: 5),
+                          CustomTextFormField(
+                            labelText: 'Email',
+                            controller: _emailController,
+                            validator: emailValidator,
+                          ),
+                          SizedBox(height: 15),
+                          Text(
+                            'Password',
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                          SizedBox(height: 5),
+                          CustomTextFormField(
+                            suffixIconData: Icons.visibility,
+                            labelText: 'Password',
+                            controller: _passwordController,
+                            validator: passwordValidator,
+                          ),
+                          SizedBox(height: 15),
+                          CustomButton(
+                            inverse: true,
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                BlocProvider.of<SignUpBloc>(context).add(
+                                  SignUpUserEvent(
+                                    email: _emailController.text.trim(),
+                                    password: _passwordController.text.trim(),
+                                  ),
+                                );
+                              }
+                            },
+                            label: 'Next',
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Already have an account?",
+                                style: TextStyle(
+                                  color: primaryColor,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.normal,
+                                ),
                               ),
-                            );
-                          },
-                          child: Text(
-                            "Log in",
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontSize: 15,
-                              fontWeight: FontWeight.normal,
-                            ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => SigninScreen(),
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  "Sign in",
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     )
                   ],
                 ),
               ),
             ),
-          ),
-        ));
+          );
+        },
+      ),
+    );
   }
 }
