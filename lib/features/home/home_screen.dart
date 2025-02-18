@@ -1,7 +1,7 @@
 import 'package:dreamhome_architect/features/Profile/profile_screen.dart';
 import 'package:dreamhome_architect/features/acquired_screen/acquired_screen.dart';
-import 'package:dreamhome_architect/features/create_home_plan/create_home_plan_screen.dart';
-import 'package:dreamhome_architect/features/payment/payment_screen.dart';
+import 'package:dreamhome_architect/features/create_home_plan/create_home_plan.dart';
+import 'package:dreamhome_architect/features/view_home_plan/view_home_plan.dart';
 import 'package:dreamhome_architect/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -18,16 +18,28 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = [
-    CreateHomePlanScreen(),
+    ViewHomeplan(),
     AcquiredScreen(),
     ProfileScreen(),
-    PaymentScreen()
   ];
 
+  @override
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: _pages[_selectedIndex],
+      floatingActionButton: _selectedIndex == 0
+          ? FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CreateHomePlan(),
+                    ));
+              },
+              child: Icon(Icons.add, color: Colors.white),
+            )
+          : null,
       bottomNavigationBar: Container(
         height: 80,
         decoration: BoxDecoration(
@@ -75,10 +87,6 @@ class _HomeScreenState extends State<HomeScreen> {
               GButton(
                 icon: Icons.sell_outlined,
                 text: 'Acquired',
-              ),
-              GButton(
-                icon: LineIcons.dollarSign,
-                text: 'Payment',
               ),
               GButton(
                 icon: LineIcons.user,
