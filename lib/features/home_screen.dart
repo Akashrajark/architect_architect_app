@@ -2,10 +2,12 @@ import 'package:dreamhome_architect/features/Profile/profile_screen.dart';
 import 'package:dreamhome_architect/features/acquired_screen/acquired_screen.dart';
 import 'package:dreamhome_architect/features/home_plan/add_edit_homeplan.dart';
 import 'package:dreamhome_architect/features/home_plan/view_home_plan.dart';
+import 'package:dreamhome_architect/features/signin/signin_screen.dart';
 import 'package:dreamhome_architect/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,6 +24,25 @@ class _HomeScreenState extends State<HomeScreen> {
     AcquiredScreen(),
     ProfileScreen(),
   ];
+
+  @override
+  void initState() {
+    Future.delayed(
+        const Duration(
+          milliseconds: 200,
+        ), () {
+      User? currentUser = Supabase.instance.client.auth.currentUser;
+      if (currentUser == null ||
+          currentUser.appMetadata['role'] != 'architect') {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => SigninScreen(),
+          ),
+        );
+      }
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

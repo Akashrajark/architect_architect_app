@@ -12,12 +12,22 @@ class SigninBloc extends Bloc<SigninEvent, SigninState> {
     on<SigninEvent>((event, emit) async {
       try {
         emit(SigninLoadingState());
-
-        await Supabase.instance.client.auth.signInWithPassword(
+        AuthResponse authResponse =
+            await Supabase.instance.client.auth.signInWithPassword(
           password: event.password,
           email: event.email,
         );
-        emit(SigninSuccessState());
+        if (authResponse.user!.appMetadata['role'] == 'architect') {
+          emit(SigninSuccessState());
+        } else {
+          await Supabase.instance.client.auth.signOut();
+          emit(
+            SigninFailureState(
+              message:
+                  'Invalid credentials, please check your username and password and try again',
+            ),
+          );
+        }
       } catch (e, s) {
         Logger().e('$e\n$s');
 

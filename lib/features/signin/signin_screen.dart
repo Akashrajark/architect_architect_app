@@ -31,12 +31,13 @@ class _SigninScreenState extends State<SigninScreen> {
           milliseconds: 100,
         ), () {
       User? currentUser = Supabase.instance.client.auth.currentUser;
-      if (currentUser != null) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => HomeScreen(),
-          ),
-        );
+      if (currentUser != null &&
+          currentUser.appMetadata['role'] == 'architect') {
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (context) => HomeScreen(),
+            ),
+            (route) => false);
       }
     });
     super.initState();

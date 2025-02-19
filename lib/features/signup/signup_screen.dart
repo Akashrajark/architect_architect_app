@@ -34,7 +34,8 @@ class _SignupScreenState extends State<SignupScreen> {
           milliseconds: 100,
         ), () {
       User? currentUser = Supabase.instance.client.auth.currentUser;
-      if (currentUser != null) {
+      if (currentUser != null &&
+          currentUser.appMetadata['role'] == 'architect') {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (context) => const HomeScreen(),
