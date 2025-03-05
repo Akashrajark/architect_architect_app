@@ -6,6 +6,7 @@ import 'package:logger/web.dart';
 
 import '../../common_widgets.dart/custom_alert_dialog.dart';
 import '../../util/check_login.dart';
+import 'home_plan_details.dart';
 import 'homeplans_bloc/homeplans_bloc.dart';
 
 class ViewHomeplan extends StatefulWidget {
@@ -63,22 +64,34 @@ class _ViewHomeplanState extends State<ViewHomeplan> {
           }
         },
         builder: (context, state) {
-          if (state is HomeplansLoadingState) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          if (state is HomeplansGetSuccessState && _homeplans.isEmpty) {
-            return Center(
-              child: Text("No Homeplan found!"),
-            );
-          }
           return Stack(
             children: [
+              if (state is HomeplansLoadingState)
+                Center(
+                  child: CircularProgressIndicator(),
+                ),
+              if (state is HomeplansGetSuccessState && _homeplans.isEmpty)
+                Center(
+                  child: Text("No Homeplan found!"),
+                ),
+              if (state is HomeplansGetSuccessState && _homeplans.isEmpty)
+                Center(
+                  child: Text("No Homeplan found!"),
+                ),
               ListView.separated(
                 padding: const EdgeInsets.only(top: 90, left: 20, right: 20),
                 itemBuilder: (context, index) => HomePlanCard(
                   cardData: _homeplans[index],
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HomePlanDetail(
+                          homeplanId: _homeplans[index]['id'],
+                        ),
+                      ),
+                    );
+                  },
                 ),
                 separatorBuilder: (context, index) => SizedBox(
                   height: 30,

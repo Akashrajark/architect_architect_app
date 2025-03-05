@@ -1,5 +1,4 @@
 import 'package:dreamhome_architect/features/Profile/profile_screen.dart';
-import 'package:dreamhome_architect/features/acquired_screen/acquired_screen.dart';
 import 'package:dreamhome_architect/features/home_plan/add_edit_homeplan.dart';
 import 'package:dreamhome_architect/features/home_plan/view_home_plan.dart';
 import 'package:dreamhome_architect/features/signin/signin_screen.dart';
@@ -21,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> _pages = [
     ViewHomeplan(),
-    AcquiredScreen(),
+    // AcquiredScreen(),
     ProfileScreen(),
   ];
 
@@ -103,12 +102,12 @@ class _HomeScreenState extends State<HomeScreen> {
                           icon: LineIcons.home,
                           text: 'Home',
                         ),
-                        GButton(
-                          padding: EdgeInsets.all(10),
-                          margin: EdgeInsets.all(5),
-                          icon: Icons.sell_outlined,
-                          text: 'Acquired',
-                        ),
+                        // GButton(
+                        //   padding: EdgeInsets.all(10),
+                        //   margin: EdgeInsets.all(5),
+                        //   icon: Icons.sell_outlined,
+                        //   text: 'Acquired',
+                        // ),
                         GButton(
                           padding: EdgeInsets.all(10),
                           margin: EdgeInsets.all(5),

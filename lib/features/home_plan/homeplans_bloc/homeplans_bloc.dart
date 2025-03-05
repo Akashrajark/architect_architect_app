@@ -26,28 +26,39 @@ class HomeplansBloc extends Bloc<HomeplansEvent, HomeplansState> {
 
           emit(HomeplansGetSuccessState(homeplans: homeplans));
         } else if (event is GetAllHomeplanByIdEvent) {
-          PostgrestFilterBuilder<List<Map<String, dynamic>>> query =
-              table.select('*').eq('id', event.homeplanID);
+          PostgrestFilterBuilder<List<Map<String, dynamic>>> query = table
+              .select(
+                  '*,floors:floor_plans(*),category:categories(*),architect:architects(*)')
+              .eq('id', event.homeplanID);
 
           Map<String, dynamic> homeplan =
               await query.order('name', ascending: true).single();
 
           emit(HomeplansGetByIdSuccessState(homeplan: homeplan));
         } else if (event is AddHomeplanEvent) {
-          event.homeplanDetails['architect_user_id'] =
-              supabaseClient.auth.currentUser!.id;
-          event.homeplanDetails['image_url'] = await uploadFile(
-            'homeplans/image',
-            event.homeplanDetails['image'],
-            event.homeplanDetails['image_name'],
-          );
-          event.homeplanDetails.remove('image');
-          event.homeplanDetails.remove('image_name');
+          Map<String, dynamic> architect = await supabaseClient
+              .from('architects')
+              .select()
+              .eq('user_id', supabaseClient.auth.currentUser!.id)
+              .single();
+          if (architect['status'] != 'Approved') {
+            emit(HomeplansFailureState(message: 'Architect not approved'));
+          } else {
+            event.homeplanDetails['architect_user_id'] =
+                supabaseClient.auth.currentUser!.id;
+            event.homeplanDetails['image_url'] = await uploadFile(
+              'homeplans/image',
+              event.homeplanDetails['image'],
+              event.homeplanDetails['image_name'],
+            );
+            event.homeplanDetails.remove('image');
+            event.homeplanDetails.remove('image_name');
 
-          Map homeplan =
-              await table.insert(event.homeplanDetails).select('id').single();
+            Map homeplan =
+                await table.insert(event.homeplanDetails).select('id').single();
 
-          emit(AddHomeplanSuccessState(homeplanID: homeplan['id']));
+            emit(AddHomeplanSuccessState(homeplanID: homeplan['id']));
+          }
         } else if (event is EditHomeplanEvent) {
           if (event.homeplanDetails['image'] != null) {
             event.homeplanDetails['image_url'] = await uploadFile(
@@ -72,6 +83,12 @@ class HomeplansBloc extends Bloc<HomeplansEvent, HomeplansState> {
               await query.order('name', ascending: true);
 
           emit(CategoriesGetSuccessState(categories: categories));
+        } else if (event is DeleteFloorEvent) {
+          await supabaseClient
+              .from('floor_plans')
+              .delete()
+              .eq('id', event.floorId);
+          emit(HomeplansSuccessState());
         }
       } catch (e, s) {
         Logger().e('$e\n$s');

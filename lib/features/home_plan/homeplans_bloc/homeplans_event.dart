@@ -38,3 +38,9 @@ class DeleteHomeplanEvent extends HomeplansEvent {
 }
 
 class GetAllCategoriesEvent extends HomeplansEvent {}
+
+class DeleteFloorEvent extends HomeplansEvent {
+  final int floorId;
+
+  DeleteFloorEvent({required this.floorId});
+}

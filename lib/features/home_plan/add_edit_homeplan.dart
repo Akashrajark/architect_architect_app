@@ -85,6 +85,8 @@ class _AddEditHomeplanState extends State<AddEditHomeplan> {
                         homeplanID: state.homeplanID,
                       )),
             );
+          } else if (state is HomeplansSuccessState) {
+            Navigator.pop(context);
           }
         },
         builder: (context, state) {
