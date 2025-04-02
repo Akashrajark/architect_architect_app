@@ -64,6 +64,7 @@ class _HomePlanDetailState extends State<HomePlanDetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: BlocProvider.value(
         value: _homeplansBloc,
         child: BlocConsumer<HomeplansBloc, HomeplansState>(

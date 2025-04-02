@@ -48,6 +48,14 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
+        title: Text(
+          _selectedIndex == 0 ? 'Home Architect' : 'Profile',
+          style: TextStyle(
+            color: primaryColor,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ),
       body: Stack(
         alignment: Alignment.bottomCenter,
