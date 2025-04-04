@@ -93,23 +93,7 @@ class _AddEditFloorScreenState extends State<AddEditFloorScreen> {
                     controller: _floorNameController,
                     validator: alphabeticWithSpaceValidator,
                   ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    'Description',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  CustomTextFormField(
-                    isLoading: state is FloorsLoadingState,
-                    labelText: 'Description',
-                    controller: _floorDesController,
-                    validator: notEmptyValidator,
-                  ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 10),
                   Text(
                     'Bedrooms',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
@@ -138,6 +122,24 @@ class _AddEditFloorScreenState extends State<AddEditFloorScreen> {
                     labelText: 'Bathrooms',
                     controller: _bathroomController,
                     validator: numericValidator,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    'Description',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  CustomTextFormField(
+                    minLines: 3,
+                    maxLines: 3,
+                    isLoading: state is FloorsLoadingState,
+                    labelText: 'Description',
+                    controller: _floorDesController,
+                    validator: notEmptyValidator,
                   ),
                 ],
               ),

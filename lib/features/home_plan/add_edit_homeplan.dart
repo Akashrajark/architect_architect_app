@@ -26,13 +26,38 @@ class _AddEditHomeplanState extends State<AddEditHomeplan> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _desController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
-  final TextEditingController _categoryController = TextEditingController();
+  final TextEditingController _plotLengthController = TextEditingController();
+  final TextEditingController _plotWidthController = TextEditingController();
+  final TextEditingController _plotAreaController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final HomeplansBloc _homeplansBloc = HomeplansBloc();
 
   File? coverImage;
   List _categories = [];
   int? _selectedCategory;
+  String _selectedRoadFacing = 'North';
+  final List roadFacingOptions = [
+    {'name': 'North'},
+    {'name': 'South'},
+    {'name': 'East'},
+    {'name': 'West'},
+    {'name': 'Northeast'},
+    {'name': 'Northwest'},
+    {'name': 'Southeast'},
+    {'name': 'Southwest'},
+  ];
+
+  void calculatePlotArea() {
+    final int? length = int.tryParse(_plotLengthController.text.trim());
+    final int? width = int.tryParse(_plotWidthController.text.trim());
+
+    if (length != null && width != null) {
+      final int area = length * width;
+      _plotAreaController.text = area.toString(); // sets area to controller
+    } else {
+      _plotAreaController.text = ''; // clear if input is invalid
+    }
+  }
 
   @override
   void initState() {
@@ -42,8 +67,10 @@ class _AddEditHomeplanState extends State<AddEditHomeplan> {
       _titleController.text = widget.homeplanDetails!['name'];
       _desController.text = widget.homeplanDetails!['description'];
       _priceController.text = widget.homeplanDetails!['price'].toString();
-      _categoryController.text = widget.homeplanDetails!['category']['name'];
       _selectedCategory = widget.homeplanDetails!['category_id'];
+      _plotAreaController.text = widget.homeplanDetails!['plot_area'];
+      _plotLengthController.text = widget.homeplanDetails!['plot_length'];
+      _plotWidthController.text = widget.homeplanDetails!['plot_width'];
     }
     if (widget.categoryId != null) {
       _selectedCategory = widget.categoryId;
@@ -133,33 +160,7 @@ class _AddEditHomeplanState extends State<AddEditHomeplan> {
                     height: 10,
                   ),
                   Text(
-                    'Category',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  CustomDropDownMenu(
-                    isLoading: state is HomeplansLoadingState,
-                    initialSelection: _selectedCategory,
-                    controller: _categoryController,
-                    hintText: "Select Category",
-                    onSelected: (selected) {
-                      _selectedCategory = selected;
-                    },
-                    dropdownMenuEntries: List.generate(
-                      _categories.length,
-                      (index) => DropdownMenuEntry(
-                        value: _categories[index]['id'],
-                        label: _categories[index]['name'],
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    'Description',
+                    'Plot Length (m)',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
                   ),
                   SizedBox(
@@ -167,9 +168,89 @@ class _AddEditHomeplanState extends State<AddEditHomeplan> {
                   ),
                   CustomTextFormField(
                     isLoading: state is HomeplansLoadingState,
-                    labelText: 'Enter Description',
-                    controller: _desController,
-                    validator: notEmptyValidator,
+                    labelText: 'Enter Length',
+                    controller: _plotLengthController,
+                    validator: numericValidator,
+                    onChanged: (value) {
+                      calculatePlotArea();
+                    },
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    'Plot Width (m)',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  CustomTextFormField(
+                    isLoading: state is HomeplansLoadingState,
+                    labelText: 'Enter Width',
+                    controller: _plotWidthController,
+                    validator: numericValidator,
+                    onChanged: (value) {
+                      calculatePlotArea();
+                    },
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    'Plot Area (m²)',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  CustomTextFormField(
+                    isLoading: state is HomeplansLoadingState,
+                    labelText: 'Enter Area',
+                    controller: _plotAreaController,
+                    validator: numericValidator,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  CustomDropDownMenu(
+                    iconData: Icons.explore,
+                    isExpanded: true,
+                    isRequired: true,
+                    selectedValue: _selectedRoadFacing,
+                    title: 'Road Facing',
+                    hintText: "Select Road Facing",
+                    onSelected: (selected) {
+                      _selectedRoadFacing = selected;
+                    },
+                    dropdownMenuItems: List.generate(
+                      roadFacingOptions.length,
+                      (index) => DropdownMenuItem(
+                        value: roadFacingOptions[index]['name'],
+                        child: Text(roadFacingOptions[index]['name']),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  CustomDropDownMenu(
+                    iconData: Icons.category,
+                    isExpanded: true,
+                    isRequired: true,
+                    selectedValue: _selectedCategory,
+                    title: 'Category',
+                    hintText: "Select Category",
+                    onSelected: (selected) {
+                      _selectedCategory = selected;
+                    },
+                    dropdownMenuItems: List.generate(
+                      _categories.length,
+                      (index) => DropdownMenuItem(
+                        value: _categories[index]['id'],
+                        child: Text(_categories[index]['name']),
+                      ),
+                    ),
                   ),
                   SizedBox(
                     height: 10,
@@ -187,7 +268,24 @@ class _AddEditHomeplanState extends State<AddEditHomeplan> {
                     controller: _priceController,
                     validator: numericValidator,
                   ),
-                  SizedBox(height: 10),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    'Description',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  CustomTextFormField(
+                    minLines: 3,
+                    maxLines: 3,
+                    isLoading: state is HomeplansLoadingState,
+                    labelText: 'Enter Description',
+                    controller: _desController,
+                    validator: notEmptyValidator,
+                  ),
                 ],
               ),
             ),
@@ -205,6 +303,10 @@ class _AddEditHomeplanState extends State<AddEditHomeplan> {
                       'description': _desController.text.trim(),
                       'price': _priceController.text.trim(),
                       'category_id': _selectedCategory,
+                      'road_facing': _selectedRoadFacing,
+                      'plot_length': _plotLengthController.text.trim(),
+                      'plot_width': _plotWidthController.text.trim(),
+                      'plot_area': _plotAreaController.text.trim(),
                     };
 
                     if (coverImage != null) {

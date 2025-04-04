@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_theme.dart';
+
 class CustomTextFormField extends StatelessWidget {
-  final bool isLoading;
-  final String? labelText;
+  final String labelText;
   final String? title;
   final double width;
   final int? maxLines, minLines;
@@ -10,11 +11,13 @@ class CustomTextFormField extends StatelessWidget {
   final String? Function(String?)? validator;
   final IconData? prefixIconData, suffixIconData;
   final EdgeInsetsGeometry? contentPadding;
-  final TextInputType? keyboardType;
+  final Function(String)? onChanged;
 
+  final bool isLoading;
   const CustomTextFormField({
     super.key,
     required this.labelText,
+    this.isLoading = false,
     this.width = 400,
     this.title,
     required this.controller,
@@ -24,8 +27,7 @@ class CustomTextFormField extends StatelessWidget {
     this.maxLines,
     this.minLines,
     this.contentPadding,
-    required this.isLoading,
-    this.keyboardType,
+    this.onChanged,
   });
 
   @override
@@ -42,21 +44,27 @@ class CustomTextFormField extends StatelessWidget {
             ),
           if (title != null) const SizedBox(height: 5),
           TextFormField(
-            enabled: !isLoading,
             controller: controller,
             validator: validator,
             minLines: minLines,
             maxLines: maxLines,
             textInputAction: TextInputAction.next,
-            keyboardType: keyboardType,
+            onChanged: onChanged,
+            enabled: !isLoading,
             decoration: InputDecoration(
-              contentPadding: contentPadding ??
-                  ((prefixIconData != null || suffixIconData != null)
-                      ? null
-                      : const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 15,
-                        )),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: maxLines != null
+                    ? BorderRadius.all(
+                        Radius.circular(20),
+                      )
+                    : BorderRadius.all(
+                        Radius.circular(25),
+                      ),
+                borderSide: BorderSide(
+                  color: outlineColor,
+                ),
+              ),
+              contentPadding: contentPadding,
               hintText: labelText,
               suffixIcon: suffixIconData != null
                   ? Icon(
